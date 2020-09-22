@@ -4,6 +4,7 @@ Imports FileInfo = System.IO.FileInfo
 Friend Class SettingsFile
     Implements ISettingsFile
     Implements IDisposable
+
     Private Structure TThis
         Public FileLocation As FileInfo
         Public Settings As Dictionary(Of String, ISetting)
@@ -17,10 +18,15 @@ Friend Class SettingsFile
             .Settings = New Dictionary(Of String, ISetting)
         }
     End Sub
+
     Private Shared Function CreateKey(Section As String, Name As String) As String
         Return Join({Section, Name})
     End Function
+
     Public Overloads Function GetSetting(Of T)(Section As String, Name As String, DefaultValue As T) As ISetting(Of T) Implements ISettingsFile.GetSetting
+        NullGuard.ThrowIfNullOrEmpty(Section, NameOf(Section), NameOf(GetSetting))
+        NullGuard.ThrowIfNullOrEmpty(Name, NameOf(Name), NameOf(GetSetting))
+
         Dim Key As String = CreateKey(Section, Name)
 
         Try
@@ -34,20 +40,36 @@ Friend Class SettingsFile
             Throw New InvalidCastException("The type of '" & Name & "' is different from when it was initially declared.")
         End Try
     End Function
+
     Public Overloads Function GetSetting(Of T)(Section As UserDefinedSection, Name As UserDefinedSetting, DefaultValue As T) As ISetting(Of T) Implements ISettingsFile.GetSetting
+        NullGuard.ThrowIfNull(Section, NameOf(Section), NameOf(GetSetting))
+        NullGuard.ThrowIfNull(Name, NameOf(Name), NameOf(GetSetting))
+
         Return GetSetting(Section.ToString, Name.ToString, DefaultValue)
     End Function
+
     Public Overloads Sub RemoveSetting(ByVal Section As String, ByVal Name As String) Implements ISettingsFile.RemoveSetting
+        NullGuard.ThrowIfNullOrEmpty(Section, NameOf(Section), NameOf(RemoveSetting))
+        NullGuard.ThrowIfNullOrEmpty(Name, NameOf(Name), NameOf(RemoveSetting))
+
         If This.Settings.Remove(CreateKey(Section, Name)) Then
             INI.CRUD.EntryDelete(This.FileLocation.FullName, Section, Name)
         End If
     End Sub
+
     Public Overloads Sub RemoveSetting(Setting As ISetting) Implements ISettingsFile.RemoveSetting
+        NullGuard.ThrowIfNull(Setting, NameOf(Setting), NameOf(RemoveSetting))
+
         RemoveSetting(Setting.Section, Setting.Name)
     End Sub
+
     Public Overloads Sub RemoveSetting(Section As UserDefinedSection, Name As UserDefinedSetting) Implements ISettingsFile.RemoveSetting
+        NullGuard.ThrowIfNull(Section, NameOf(Section), NameOf(RemoveSetting))
+        NullGuard.ThrowIfNull(Name, NameOf(Name), NameOf(RemoveSetting))
+
         RemoveSetting(Section.ToString, Name.ToString)
     End Sub
+
     Friend Sub Dispose() Implements IDisposable.Dispose
         Static Disposed As Boolean = False
 
@@ -62,6 +84,7 @@ Friend Class SettingsFile
             GC.SuppressFinalize(Me)
         End If
     End Sub
+
     Protected Overrides Sub Finalize()
         Dispose()
         MyBase.Finalize()

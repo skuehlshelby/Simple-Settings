@@ -102,6 +102,7 @@
     </Compile>
     <Compile Include="Concrete Classes\SettingChangedEventArgs.vb" />
     <Compile Include="Concrete Classes\Factory.vb" />
+    <Compile Include="NullGuard.vb" />
     <Compile Include="SyntaxTest.vb" />
     <Compile Include="NativeMethods.vb" />
   </ItemGroup>

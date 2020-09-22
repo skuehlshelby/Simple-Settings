@@ -13,7 +13,11 @@ Public NotInheritable Class Factory
 
     Private Sub New()
     End Sub
-
+    ''' <exception cref="ArgumentException"></exception>
+    ''' <exception cref="ArgumentNullException"></exception>
+    ''' <exception cref="Security.SecurityException"></exception>
+    ''' <exception cref="NotSupportedException"></exception>
+    ''' <exception cref="IO.PathTooLongException"></exception>
     Private Shared Function StandardizeFileName(ParamArray PathComponents As String()) As String
         Return Path.ChangeExtension(Path.GetFullPath(Path.Combine(PathComponents)), ".ini")
     End Function
@@ -21,6 +25,8 @@ Public NotInheritable Class Factory
     ''' <include file='Docs.xml' path='//methods/getSettingsFile'/>
     ''' <include file='Docs.xml' path='//parameters/filePath'/>
     Public Shared Function GetSettingsFile(ParamArray FilePath As String()) As ISettingsFile
+        NullGuard.ThrowIfAllNullOrEmpty(FilePath, NameOf(FilePath), NameOf(GetSettingsFile))
+
         Dim SettingsFileInfo As IO.FileInfo = New IO.FileInfo(StandardizeFileName(FilePath))
 
         If SettingsFileInfo.Directory.Exists Then
@@ -41,8 +47,13 @@ Public NotInheritable Class Factory
     ''' <include file='Docs.xml' path='//parameters/defaultValue'/>
     ''' <include file='Docs.xml' path='//genericParameters/T'/>
     Public Overloads Shared Function GetSetting(Of T)(ByVal FilePath As String, ByVal Section As String, ByVal Name As String, ByVal DefaultValue As T) As ISetting(Of T)
+        NullGuard.ThrowIfNullOrEmpty(FilePath, NameOf(FilePath), NameOf(GetSetting))
+        NullGuard.ThrowIfNullOrEmpty(Section, NameOf(Section), NameOf(GetSetting))
+        NullGuard.ThrowIfNullOrEmpty(Name, NameOf(Section), NameOf(GetSetting))
+
         Return GetSettingsFile(FilePath).GetSetting(Section, Name, DefaultValue)
     End Function
+
     ''' <include file='Docs.xml' path='//methods/getSetting/*[@parentClass="factory"]'/>
     ''' <include file='Docs.xml' path='//parameters/filePath'/>
     ''' <include file='Docs.xml' path='//parameters/section[@type="userDefined"]/*'/>
@@ -50,6 +61,10 @@ Public NotInheritable Class Factory
     ''' <include file='Docs.xml' path='//parameters/defaultValue'/>
     ''' <include file='Docs.xml' path='//genericParameters/T'/>
     Public Overloads Shared Function GetSetting(Of T)(ByVal FilePath As String, Section As Abstract.UserDefinedSection, Name As Abstract.UserDefinedSetting, DefaultValue As T) As ISetting(Of T)
+        NullGuard.ThrowIfNullOrEmpty(FilePath, NameOf(FilePath), NameOf(GetSetting))
+        NullGuard.ThrowIfNull(Section, NameOf(Section), NameOf(GetSetting))
+        NullGuard.ThrowIfNull(Name, NameOf(Section), NameOf(GetSetting))
+
         Return GetSettingsFile(FilePath).GetSetting(Section, Name, DefaultValue)
     End Function
 
@@ -58,38 +73,41 @@ Public NotInheritable Class Factory
     ''' <include file='Docs.xml' path='//parameters/section[@type="string"]/*'/>
     ''' <include file='Docs.xml' path='//parameters/name[@type="string"]/*'/>
     Public Overloads Shared Sub RemoveSetting(ByVal FilePath As String, ByVal Section As String, ByVal Name As String)
-        Try
-            Cache.Item(StandardizeFileName(FilePath)).RemoveSetting(Section, Name)
-        Catch Ex As KeyNotFoundException
-        Catch Ex As ArgumentNullException
-        End Try
+        NullGuard.ThrowIfNullOrEmpty(FilePath, NameOf(FilePath), NameOf(RemoveSetting))
+        NullGuard.ThrowIfNullOrEmpty(Section, NameOf(Section), NameOf(RemoveSetting))
+        NullGuard.ThrowIfNullOrEmpty(Name, NameOf(Section), NameOf(RemoveSetting))
+
+        Cache.Item(StandardizeFileName(FilePath)).RemoveSetting(Section, Name)
     End Sub
+
     ''' <include file='Docs.xml' path='//methods/removeSetting'/>
     ''' <include file='Docs.xml' path='//parameters/filePath'/>
     ''' <include file='Docs.xml' path='//parameters/setting'/>
     Public Overloads Shared Sub RemoveSetting(ByVal FilePath As String, ByVal Setting As ISetting)
-        If Setting Is Nothing Then
-            Throw New ArgumentNullException(NameOf(Setting))
-        Else
-            RemoveSetting(FilePath, Setting.Section, Setting.Name)
-        End If
+        NullGuard.ThrowIfNullOrEmpty(FilePath, NameOf(FilePath), NameOf(RemoveSetting))
+        NullGuard.ThrowIfNull(Setting, NameOf(Setting), NameOf(RemoveSetting))
+
+        RemoveSetting(FilePath, Setting.Section, Setting.Name)
     End Sub
+
     ''' <include file='Docs.xml' path='//methods/removeSetting'/>
     ''' <include file='Docs.xml' path='//parameters/filePath'/>
     ''' <include file='Docs.xml' path='//parameters/section[@type="userDefined"]/*'/>
     ''' <include file='Docs.xml' path='//parameters/name[@type="userDefined"]/*'/>
     Public Overloads Shared Sub RemoveSetting(ByVal FilePath As String, Section As Abstract.UserDefinedSection, Name As Abstract.UserDefinedSetting)
-        If Section Is Nothing OrElse Name Is Nothing Then
-            Throw New ArgumentNullException(If(Section Is Nothing, NameOf(Section), NameOf(Name)))
-        Else
-            RemoveSetting(FilePath, Section.ToString, Name.ToString)
-        End If
+        NullGuard.ThrowIfNullOrEmpty(FilePath, NameOf(FilePath), NameOf(RemoveSetting))
+        NullGuard.ThrowIfNull(Section, NameOf(Section), NameOf(RemoveSetting))
+        NullGuard.ThrowIfNull(Name, NameOf(Section), NameOf(RemoveSetting))
+
+        RemoveSetting(FilePath, Section.ToString, Name.ToString)
     End Sub
 
     ''' <include file='Docs.xml' path='//methods/removeSettingsFile'/>
     ''' <include file='Docs.xml' path='//parameters/filePath'/>
     ''' <include file='Docs.xml' path='//parameters/killFile'/>
     Public Shared Sub RemoveSettingsFile(ByVal FilePath As String, Optional ByVal KillFile As Boolean = False)
+        NullGuard.ThrowIfNullOrEmpty(FilePath, NameOf(FilePath), NameOf(RemoveSettingsFile))
+
         Dim StandardizedFileName As String = StandardizeFileName(FilePath)
 
         If Cache.ContainsKey(StandardizedFileName) Then
