@@ -18,6 +18,7 @@ Public Class SettingsTests
             Assert.IsTrue(TestCase.IsWholeNumber)
         Next TestCase
     End Sub
+
     <TestMethod>
     Public Sub StringConversionRetainsOriginalValue()
         Const LongValue As Long = 1234567

@@ -4,7 +4,6 @@ Imports FileInfo = System.IO.FileInfo
 Friend Class SettingsFile
     Implements ISettingsFile
     Implements IDisposable
-
     Private Structure TThis
         Public FileLocation As FileInfo
         Public Settings As Dictionary(Of String, ISetting)
@@ -71,17 +70,22 @@ Friend Class SettingsFile
     End Sub
 
     Friend Sub Dispose() Implements IDisposable.Dispose
+        On Error Resume Next
         Static Disposed As Boolean = False
 
         If Not Disposed Then
+            GC.SuppressFinalize(Me)
+
             For Each Setting As ISetting In This.Settings.Values
                 INI.CRUD.EntryWrite(This.FileLocation.FullName, Setting.Section, Setting.Name, Setting.ToString)
             Next Setting
 
             This.Settings.Clear()
+            This.Settings = Nothing
+            This.FileLocation = Nothing
+            This = Nothing
 
             Disposed = True
-            GC.SuppressFinalize(Me)
         End If
     End Sub
 
