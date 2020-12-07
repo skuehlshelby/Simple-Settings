@@ -94,35 +94,31 @@ Namespace Abstract
         '''<include file='EnumDocs.xml' path='//parameters/left/*'/>
         '''<include file='EnumDocs.xml' path='//parameters/right/*'/>
         Public Shared Operator <(left As Enumeration, right As Enumeration) As Boolean
-            Return If(ReferenceEquals(left, Nothing), Not ReferenceEquals(right, Nothing), left.CompareTo(right) < 0)
+            Return If(left Is Nothing, right IsNot Nothing, left.CompareTo(right) < 0)
         End Operator
         '''<include file='EnumDocs.xml' path='//operators/lessThanOrEqualTo'/>
         '''<include file='EnumDocs.xml' path='//parameters/left/*'/>
         '''<include file='EnumDocs.xml' path='//parameters/right/*'/>
         Public Shared Operator <=(left As Enumeration, right As Enumeration) As Boolean
-            Return ReferenceEquals(left, Nothing) OrElse left.CompareTo(right) <= 0
+            Return left Is Nothing OrElse left.CompareTo(right) <= 0
         End Operator
         '''<include file='EnumDocs.xml' path='//operators/greaterThan'/>
         '''<include file='EnumDocs.xml' path='//parameters/left/*'/>
         '''<include file='EnumDocs.xml' path='//parameters/right/*'/>
         Public Shared Operator >(left As Enumeration, right As Enumeration) As Boolean
-            Return Not ReferenceEquals(left, Nothing) AndAlso left.CompareTo(right) > 0
+            Return left IsNot Nothing AndAlso left.CompareTo(right) > 0
         End Operator
         '''<include file='EnumDocs.xml' path='//operators/greaterThanOrEqualTo'/>
         '''<include file='EnumDocs.xml' path='//parameters/left/*'/>
         '''<include file='EnumDocs.xml' path='//parameters/right/*'/>
         Public Shared Operator >=(left As Enumeration, right As Enumeration) As Boolean
-            Return If(ReferenceEquals(left, Nothing), ReferenceEquals(right, Nothing), left.CompareTo(right) >= 0)
+            Return If(left Is Nothing, right Is Nothing, left.CompareTo(right) >= 0)
         End Operator
         '''<include file='EnumDocs.xml' path='//operators/equals'/>
         '''<include file='EnumDocs.xml' path='//parameters/left/*'/>
         '''<include file='EnumDocs.xml' path='//parameters/right/*'/>
         Public Shared Operator =(left As Enumeration, right As Enumeration) As Boolean
-            If ReferenceEquals(left, Nothing) Then
-                Return ReferenceEquals(right, Nothing)
-            End If
-
-            Return left.Equals(right)
+            Return If(left Is Nothing, right Is Nothing, left.Equals(right))
         End Operator
         '''<include file='EnumDocs.xml' path='//operators/notEqual'/>
         '''<include file='EnumDocs.xml' path='//parameters/left/*'/>
