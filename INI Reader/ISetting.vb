@@ -16,7 +16,7 @@ Public Interface ISetting
     Function ToBoolean() As Boolean
     ''' <include file='Docs.xml' path='//methods/equals[@parentClass="setting"]'/>
     ''' <include file='Docs.xml' path='//parameters/obj[@parentMethod="equals"]'/>
-    Function Equals(ByVal obj As Object) As Boolean
+    Function Equals(obj As Object) As Boolean
 End Interface
 
 ''' <include file='Docs.xml' path='//classes/settingOfT'/>

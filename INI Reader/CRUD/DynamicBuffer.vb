@@ -1,13 +1,13 @@
-﻿Imports StringBuilder = System.Text.StringBuilder
+﻿Imports System.Text
 
-Namespace INI
+Namespace CRUD
     Friend Class DynamicBuffer
         Private Structure TThis
             Public Buffer As StringBuilder
         End Structure
 
         Private This As TThis
-        Public Sub New(Optional ByVal StartingSize As Integer = 128)
+        Public Sub New(Optional StartingSize As Integer = 128)
             This = New TThis With {
                     .Buffer = New StringBuilder(StartingSize)
                 }
@@ -35,7 +35,7 @@ Namespace INI
                 Return This.Buffer
             End Get
             Set(value As StringBuilder)
-                If Not This.Buffer Is value Then
+                If This.Buffer IsNot value Then
                     This.Buffer = value
                 End If
             End Set

@@ -5,11 +5,11 @@
     End Structure
 
     Private This As TThis
-    Public Sub New(OldValue As T, ByVal NewValue As T)
+    Public Sub New(OldValue As T, NewValue As T)
         This = New TThis With {
             .OldValue = OldValue,
             .NewValue = NewValue
-        }
+            }
     End Sub
     Public ReadOnly Property OldValue As T
         Get

@@ -1,29 +1,29 @@
-﻿Public NotInheritable Class NullGuard
-    Private Const ErrorMessage As String = "Argument '{0}' supplied to method '{1}' cannot be null/nothing."
-    Friend Shared Sub ThrowIfNull(ByVal Argument As Object, ByVal ArgumentName As String, ByVal MethodName As String)
-        If Argument Is Nothing Then
-            Throw New ArgumentNullException(String.Format(Globalization.CultureInfo.InvariantCulture, ErrorMessage, ArgumentName, MethodName))
+﻿Friend NotInheritable Class NullGuard
+    Public Shared Sub ThrowIfNull(argument As Object, argumentName As String, methodName As String)
+        If argument Is Nothing Then
+            ThrowException(argumentName, methodName)
         End If
     End Sub
-    Friend Shared Sub ThrowIfNullOrEmpty(ByVal Argument As String, ByVal ArgumentName As String, MethodName As String)
-        If String.IsNullOrEmpty(Argument) Then
-            Throw New ArgumentNullException(String.Format(Globalization.CultureInfo.InvariantCulture, ErrorMessage, ArgumentName, MethodName))
-        End If
-    End Sub
-    Friend Shared Sub ThrowIfAllNullOrEmpty(ByVal Argument As String(), ByVal ArgumentName As String, MethodName As String)
-        For Each SubString As String In Argument
-            If Not String.IsNullOrEmpty(SubString) Then
-                Exit Sub
-            End If
-        Next SubString
 
-        Throw New ArgumentNullException(String.Format(Globalization.CultureInfo.InvariantCulture, ErrorMessage, ArgumentName, MethodName))
+    Public Shared Sub ThrowIfNull(argument As String, argumentName As String, methodName As String)
+        If String.IsNullOrEmpty(argument) Then
+            ThrowException(argumentName, methodName)
+        End If
     End Sub
-    Friend Shared Sub ThrowIfAnyNullOrEmpty(ByVal Argument As String(), ByVal ArgumentName As String, MethodName As String)
-        For Each SubString As String In Argument
-            If Not String.IsNullOrEmpty(SubString) Then
-                Throw New ArgumentNullException(String.Format(Globalization.CultureInfo.InvariantCulture, ErrorMessage, ArgumentName, MethodName))
-            End If
-        Next SubString
+
+    Public Shared Sub ThrowIfNullOrEmpty(argument As String, argumentName As String, methodName As String)
+        If String.IsNullOrEmpty(argument) Then
+            ThrowException(argumentName, methodName)
+        End If
+    End Sub
+
+    Public Shared Sub ThrowIfAllNullOrEmpty(args As String(), argumentName As String, methodName As String)
+        If args.All(Function(arg) String.IsNullOrEmpty(arg)) Then
+            ThrowException(argumentName, methodName)
+        End If
+    End Sub
+
+    Private Shared Sub ThrowException(argumentName As String, methodName As String)
+        Throw New ArgumentNullException($"Argument '{argumentName}' supplied to method '{methodName}' cannot be null/nothing.")
     End Sub
 End Class

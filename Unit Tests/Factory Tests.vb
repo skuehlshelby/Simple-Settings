@@ -2,7 +2,7 @@
 <TestClass>
 Public Class Factory_Tests
     Private ReadOnly INITestFilePath As String = IO.Path.Combine(Environ("UserProfile"), "Desktop", "SettingsTest")
-    Private Function Environ(ByVal VariableName As String) As String
+    Private Function Environ(VariableName As String) As String
         Return Environment.GetEnvironmentVariable(VariableName)
     End Function
     <TestMethod>

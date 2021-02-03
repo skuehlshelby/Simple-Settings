@@ -1,11 +1,13 @@
-﻿Imports SettingsStorage
+﻿Imports SimpleSettings.CRUD
+
 <TestClass>
 Public Class DynamicBufferTests
-    Private CUT As INI.DynamicBuffer
+    Private CUT As DynamicBuffer
     Private Const DefaultStartingSize As Byte = 128
+
     <TestInitialize>
     Public Sub Setup()
-        CUT = New INI.DynamicBuffer(StartingSize:=DefaultStartingSize)
+        CUT = New DynamicBuffer(StartingSize:=DefaultStartingSize)
         CUT.Value.Clear()
     End Sub
     <TestMethod>

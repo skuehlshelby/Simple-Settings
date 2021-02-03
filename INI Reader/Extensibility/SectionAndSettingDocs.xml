@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<docs>
+
+  <section>
+    <summary>
+      An extensible <see langword="Enum"/> used to provide intellisense for section names.
+    </summary>
+  </section>
+
+  <setting>
+     <summary>
+           An extensible <see langword="Enum"/> used to provide intellisense for setting names.
+    </summary>
+  </setting>
+</docs>

@@ -1,4 +1,5 @@
 ﻿Imports System.Globalization
+
 ''' <inheritdoc/>
 Friend MustInherit Class Setting
     Implements ISetting
@@ -9,11 +10,11 @@ Friend MustInherit Class Setting
 
     Private This As TThis
 
-    Friend Sub New(ByVal Section As String, ByVal Name As String)
+    Friend Sub New(section As String, name As String)
         This = New TThis With {
-            .Name = Name,
-            .Section = Section
-        }
+            .Name = name,
+            .Section = section
+            }
     End Sub
     Friend ReadOnly Property Name As String Implements ISetting.Name
         Get
@@ -38,17 +39,10 @@ Friend MustInherit Class Setting
     Public MustOverride Overrides Function ToString() As String Implements ISetting.ToString
 
     Public Overrides Function Equals(obj As Object) As Boolean Implements ISetting.Equals
-        If obj Is Nothing OrElse TypeOf obj IsNot Setting Then
-            Return False
-        Else
-            With DirectCast(obj, Setting)
-                Return This.Section = .Section AndAlso This.Name = .Name OrElse ReferenceEquals(Me, obj)
-            End With
-        End If
+        Return ReferenceEquals(Me, obj) OrElse obj.GetHashCode() = GetHashCode() AndAlso TypeOf obj Is Setting
     End Function
     Public Overrides Function GetHashCode() As Integer
-        On Error Resume Next
-        Return CInt(397 ^ Name.GetHashCode() ^ Section.GetHashCode())
+        Return Name.GetHashCode() << 4 Xor Section.GetHashCode()
     End Function
 End Class
 Friend Class Setting(Of T)
@@ -62,12 +56,12 @@ Friend Class Setting(Of T)
 
     Public Event SettingChanged As ISetting(Of T).SettingChangedEventHandler Implements ISetting(Of T).SettingChanged
 
-    Friend Sub New(ByVal Section As String, ByVal Name As String, ByVal DefaultValue As T)
-        MyBase.New(Section, Name)
+    Friend Sub New(section As String, name As String, defaultValue As T)
+        MyBase.New(section, name)
         This = New TThis With {
-            .DefaultValue = DefaultValue,
-            .Value = DefaultValue
-        }
+            .DefaultValue = defaultValue,
+            .Value = defaultValue
+            }
     End Sub
     Friend ReadOnly Property DefaultValue As T Implements ISetting(Of T).DefaultValue
         Get
@@ -79,24 +73,18 @@ Friend Class Setting(Of T)
         Get
             Return This.Value
         End Get
-        Set(NewValue As T)
-            If Not This.Value.Equals(NewValue) Then
-                Dim OldValue As T = This.Value
-                This.Value = NewValue
-                RaiseEvent SettingChanged(Me, New SettingChangedEventArgs(Of T)(OldValue, NewValue))
+        Set(newValue As T)
+            If Not This.Value.Equals(newValue) Then
+                Dim oldValue As T = This.Value
+                This.Value = newValue
+                RaiseEvent SettingChanged(Me, New SettingChangedEventArgs(Of T)(oldValue, newValue))
             End If
         End Set
     End Property
 
     Friend Overrides ReadOnly Property IsWholeNumber() As Boolean
         Get
-            For Each Character As Char In This.Value.ToString
-                If Not Char.IsDigit(Character) Then
-                    Return False
-                End If
-            Next Character
-
-            Return True
+            Return This.Value.ToString.All(Function(character) Char.IsDigit(character))
         End Get
     End Property
 

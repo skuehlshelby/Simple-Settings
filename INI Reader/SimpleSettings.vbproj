@@ -11,8 +11,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8082D8E7-7AF7-44AF-8E88-50E6D1DC76DA}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>SettingsStorage</RootNamespace>
-    <AssemblyName>SettingsStorage</AssemblyName>
+    <RootNamespace>SimpleSettings</RootNamespace>
+    <AssemblyName>SimpleSettings</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -26,7 +26,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>SettingsStorage.xml</DocumentationFile>
+    <DocumentationFile>SimpleSettings.xml</DocumentationFile>
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -37,7 +37,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>SettingsStorage.xml</DocumentationFile>
+    <DocumentationFile>SimpleSettings.xml</DocumentationFile>
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -76,14 +76,15 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Abstract\Extensible Enum.vb" />
-    <Compile Include="Abstract\Section.vb" />
-    <Compile Include="Concrete Classes\Setting.vb" />
-    <Compile Include="Concrete Classes\SettingsFile.vb" />
-    <Compile Include="INI\Dynamic Buffer.vb" />
-    <Compile Include="INI\CRUD.vb" />
-    <Compile Include="Interfaces\ISettingsFile.vb" />
-    <Compile Include="Interfaces\ISetting.vb" />
+    <Compile Include="Extensibility\UserDefinedSetting.vb" />
+    <Compile Include="Extensibility\UserDefinedSection.vb" />
+    <Compile Include="Setting.vb" />
+    <Compile Include="SettingsFile.vb" />
+    <Compile Include="CRUD\DynamicBuffer.vb" />
+    <Compile Include="CRUD\CRUD.vb" />
+    <Compile Include="InternalsVisibleTo.vb" />
+    <Compile Include="ISettingsFile.vb" />
+    <Compile Include="ISetting.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -100,11 +101,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Concrete Classes\SettingChangedEventArgs.vb" />
-    <Compile Include="Concrete Classes\Factory.vb" />
+    <Compile Include="SettingChangedEventArgs.vb" />
+    <Compile Include="Factory.vb" />
     <Compile Include="NullGuard.vb" />
-    <Compile Include="SyntaxTest.vb" />
-    <Compile Include="NativeMethods.vb" />
+    <Compile Include="CRUD\NativeMethods.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -137,10 +137,10 @@
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.3.0\analyzers\dotnet\vb\Microsoft.NetFramework.VisualBasic.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Abstract\EnumDocs.xml" />
-    <Content Include="Abstract\SectionAndSettingDocs.xml" />
+    <Content Include="Extensibility\SectionAndSettingDocs.xml" />
     <Content Include="Docs.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
