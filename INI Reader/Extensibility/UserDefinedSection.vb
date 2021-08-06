@@ -1,11 +1,12 @@
-﻿Namespace Extensibility
+﻿
+Namespace Extensibility
     ''' <include file="SectionAndSettingDocs.xml" path="//section"/>
     Public MustInherit Class UserDefinedSection
 
 #Region "Instance Members"
         Protected ReadOnly Property SectionName As String
 
-        Protected Sub New(SectionName As String)
+        Protected Sub New(sectionName As String)
             Me.SectionName = SectionName
             Cache.Add(Me)
         End Sub
@@ -32,5 +33,6 @@
             Return SectionName
         End Function
 #End Region
+
     End Class
 End Namespace

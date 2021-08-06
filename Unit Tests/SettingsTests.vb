@@ -1,4 +1,5 @@
-﻿Imports SettingsStorage
+﻿Imports SimpleSettings
+
 <TestClass>
 Public Class SettingsTests
     Private ReadOnly INITestFilePath As String = IO.Path.Combine(Environ("UserProfile"), "Desktop", "SettingsTest")
@@ -7,15 +8,15 @@ Public Class SettingsTests
     End Function
     <TestMethod>
     Public Sub SettingIdentifiesBooleanValue()
-        Assert.IsTrue(New Setting(Of Boolean)("TestSection", "TestSetting", True).IsBoolean)
+        Assert.IsTrue(New Setting(Of Boolean)("TestSection", "TestSetting", True).TryCastValue(Of Boolean)(Nothing))
     End Sub
     <TestMethod>
     Public Sub SettingIdentifiesWholeNumbers()
-        For Each TestCase As Setting In New List(Of Setting) From {
+        For Each testCase As ISetting In New List(Of ISetting) From {
                                                             New Setting(Of Long)("TestSection", "TestSetting", 123456),
                                                             New Setting(Of Byte)("TestSection", "TestSetting", 12),
                                                             New Setting(Of Integer)("TestSection", "TestSetting", 0)}
-            Assert.IsTrue(TestCase.IsWholeNumber)
+            Assert.IsTrue(TestCase.TryCastValue(Of Long)(Nothing))
         Next TestCase
     End Sub
 
@@ -54,7 +55,7 @@ Public Class SettingsTests
         Dim EventsReceived As List(Of String) = New List(Of String)
         Dim SettingA As ISetting(Of Long) = Factory.GetSetting(INITestFilePath, "TestSettings", "LongSetting", DefaultValue)
 
-        AddHandler SettingA.SettingChanged, (Sub(ByRef Sender As Object, E As SettingChangedEventArgs(Of Long))
+        AddHandler SettingA.ValueChanged, (Sub(ByRef Sender As Object, E As ValueChangedEventArgs(Of Long))
                                                  EventsReceived.Add(NameOf(E))
                                              End Sub)
         SettingA.Value = NewValue

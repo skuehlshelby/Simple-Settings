@@ -1,108 +1,53 @@
-﻿Imports System.Globalization
+﻿Imports System.Runtime.InteropServices
 
-''' <inheritdoc/>
-Friend MustInherit Class Setting
-    Implements ISetting
-    Private Structure TThis
-        Public Name As String
-        Public Section As String
-    End Structure
-
-    Private This As TThis
-
-    Friend Sub New(section As String, name As String)
-        This = New TThis With {
-            .Name = name,
-            .Section = section
-            }
-    End Sub
-    Friend ReadOnly Property Name As String Implements ISetting.Name
-        Get
-            Return This.Name
-        End Get
-    End Property
-
-    Friend ReadOnly Property Section As String Implements ISetting.Section
-        Get
-            Return This.Section
-        End Get
-    End Property
-
-    Friend MustOverride ReadOnly Property IsWholeNumber() As Boolean Implements ISetting.IsWholeNumber
-
-    Friend MustOverride Function ToLong() As Long Implements ISetting.ToLong
-
-    Friend MustOverride ReadOnly Property IsBoolean() As Boolean Implements ISetting.IsBoolean
-
-    Friend MustOverride Function ToBoolean() As Boolean Implements ISetting.ToBoolean
-
-    Public MustOverride Overrides Function ToString() As String Implements ISetting.ToString
-
-    Public Overrides Function Equals(obj As Object) As Boolean Implements ISetting.Equals
-        Return ReferenceEquals(Me, obj) OrElse obj.GetHashCode() = GetHashCode() AndAlso TypeOf obj Is Setting
-    End Function
-    Public Overrides Function GetHashCode() As Integer
-        Return Name.GetHashCode() << 4 Xor Section.GetHashCode()
-    End Function
-End Class
 Friend Class Setting(Of T)
-    Inherits Setting
+    Implements ISetting
     Implements ISetting(Of T)
-    Private Structure TThis
-        Public DefaultValue As T
-        Public Value As T
-    End Structure
-    Private This As TThis
 
-    Public Event SettingChanged As ISetting(Of T).SettingChangedEventHandler Implements ISetting(Of T).SettingChanged
+    Public Event ValueChanged As ISetting(Of T).ValueChangedEventHandler Implements ISetting(Of T).ValueChanged
 
-    Friend Sub New(section As String, name As String, defaultValue As T)
-        MyBase.New(section, name)
-        This = New TThis With {
-            .DefaultValue = defaultValue,
-            .Value = defaultValue
-            }
+    Private _value As T
+
+    Friend Sub New(section As String, name As String, value As T)
+        Me.Section = section
+        Me.Name = name
+        _value = value
     End Sub
-    Friend ReadOnly Property DefaultValue As T Implements ISetting(Of T).DefaultValue
-        Get
-            Return This.DefaultValue
-        End Get
-    End Property
+
+    Public ReadOnly Property Name As String Implements ISetting.Name
+
+    Public ReadOnly Property Section As String Implements ISetting.Section
 
     Friend Property Value As T Implements ISetting(Of T).Value
         Get
-            Return This.Value
+            Return _value
         End Get
-        Set(newValue As T)
-            If Not This.Value.Equals(newValue) Then
-                Dim oldValue As T = This.Value
-                This.Value = newValue
-                RaiseEvent SettingChanged(Me, New SettingChangedEventArgs(Of T)(oldValue, newValue))
+        Set
+            If Not _value.Equals(value) Then
+                Dim e As ValueChangedEventArgs(Of T) = New ValueChangedEventArgs(Of T)(_value, value)
+                _value = Value
+                RaiseEvent ValueChanged(Me, e)
             End If
         End Set
     End Property
 
-    Friend Overrides ReadOnly Property IsWholeNumber() As Boolean
-        Get
-            Return This.Value.ToString.All(Function(character) Char.IsDigit(character))
-        End Get
-    End Property
-
-    Friend Overrides Function ToLong() As Long
-        Return Long.Parse(This.Value.ToString, CultureInfo.InvariantCulture)
+    Public Function CastValue(Of TValue)() As TValue Implements ISetting.CastValue
+        Return CType(CType(Value, Object), TValue)
     End Function
 
-    Friend Overrides ReadOnly Property IsBoolean() As Boolean
-        Get
-            Return Boolean.TryParse(This.Value.ToString, Nothing)
-        End Get
-    End Property
+    Public Function TryCastValue(Of TValue)(<Out> ByRef returnValue As TValue) As Boolean Implements ISetting.TryCastValue
+        returnValue = Nothing
 
-    Friend Overrides Function ToBoolean() As Boolean
-        Return Boolean.Parse(This.Value.ToString)
+        Try
+            returnValue = CType(CType(Value, Object), TValue)
+            Return True
+        Catch ex As InvalidCastException
+            Return False
+        End Try
     End Function
 
     Public Overrides Function ToString() As String
-        Return This.Value.ToString
+        Return Value.ToString()
     End Function
+
 End Class

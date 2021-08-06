@@ -2,42 +2,45 @@
 
 <TestClass>
 Public Class DynamicBufferTests
-    Private CUT As DynamicBuffer
+    Private _cut As DynamicBuffer
     Private Const DefaultStartingSize As Byte = 128
 
     <TestInitialize>
     Public Sub Setup()
-        CUT = New DynamicBuffer(StartingSize:=DefaultStartingSize)
-        CUT.Value.Clear()
+        _cut = New DynamicBuffer(startingSize := DefaultStartingSize)
+        _cut.Value.Clear()
     End Sub
+
     <TestMethod>
     Public Sub ValueIsCapturedWhenInputIsLessThanCapacityMinusTwo()
-        Dim TestString As String = New String("X"c, DefaultStartingSize \ 2)
-        CUT.Value.Append(TestString)
+        Dim testString As String = New String("X"c, DefaultStartingSize\2)
+        _cut.Value.Append(testString)
 
-        Assert.IsTrue(CUT.ValueCaptured)
+        Assert.IsTrue(_cut.ValueCaptured)
     End Sub
 
     <TestMethod>
     Public Sub ValueIsNotCapturedWhenInputIsGreaterThanCapacityMinusTwo()
-        Dim TestString As String = New String("X"c, DefaultStartingSize)
-        CUT.Value.Append(TestString)
+        Dim testString As String = New String("X"c, DefaultStartingSize)
+        _cut.Value.Append(testString)
 
-        Assert.IsFalse(CUT.ValueCaptured)
+        Assert.IsFalse(_cut.ValueCaptured)
     End Sub
+
     <TestMethod>
     Public Sub CapturedValueMatchesStartingValue()
-        Dim TestString As String = New String("X"c, DefaultStartingSize \ 2)
-        CUT.Value.Append(TestString)
+        Dim testString As String = New String("X"c, DefaultStartingSize\2)
+        _cut.Value.Append(testString)
 
-        Assert.AreEqual(TestString, CUT.ToString)
+        Assert.AreEqual(testString, _cut.ToString)
     End Sub
+
     <TestMethod>
     Public Sub BufferExpandsWhenValueIsNotCaptured()
-        Dim TestString As String = New String("X"c, DefaultStartingSize)
-        CUT.Value.Append(TestString)
+        Dim testString As String = New String("X"c, DefaultStartingSize)
+        _cut.Value.Append(testString)
 
-        Assert.IsFalse(CUT.ValueCaptured)
-        Assert.AreEqual(DefaultStartingSize * 2, CUT.Size)
+        Assert.IsFalse(_cut.ValueCaptured)
+        Assert.AreEqual(DefaultStartingSize*2, _cut.Size)
     End Sub
 End Class

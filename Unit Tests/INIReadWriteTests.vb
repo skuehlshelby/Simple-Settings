@@ -53,6 +53,7 @@ Public Class INIReadWriteTests
 
         Assert.AreEqual("[TestSection]", RemainingText)
     End Sub
+
     <TestCleanup>
     Public Sub Teardown()
         If IO.File.Exists(INITestFilePath) Then

@@ -101,9 +101,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="SettingChangedEventArgs.vb" />
+    <Compile Include="ValueChangedEventArgs.vb" />
     <Compile Include="Factory.vb" />
-    <Compile Include="NullGuard.vb" />
+    <Compile Include="Contracts.vb" />
     <Compile Include="CRUD\NativeMethods.vb" />
   </ItemGroup>
   <ItemGroup>
