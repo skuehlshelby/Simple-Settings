@@ -1,38 +1,48 @@
 ﻿
 Namespace Extensibility
-    ''' <include file="SectionAndSettingDocs.xml" path="//section"/>
+
+    ''' <summary>
+    ''' 
+    ''' </summary>
     Public MustInherit Class UserDefinedSection
+        Implements IEquatable(Of UserDefinedSection)
 
-#Region "Instance Members"
-        Protected ReadOnly Property SectionName As String
+        Protected ReadOnly Property Name As String
 
-        Protected Sub New(sectionName As String)
-            Me.SectionName = SectionName
+        Protected Sub New(name As String)
+            Me.Name = name
             Cache.Add(Me)
         End Sub
-#End Region
 
-#Region "Shared Members"
-        Protected Shared ReadOnly Cache As List(Of UserDefinedSection) = New List(Of UserDefinedSection)
-
-        Public Shared Function Values() As IEnumerable(Of UserDefinedSection)
-            Return Cache
-        End Function
-#End Region
-
-#Region "Overrides"
-        Public Overrides Function Equals(obj As Object) As Boolean
-            Return obj IsNot Nothing AndAlso SectionName.Equals(obj.ToString, StringComparison.InvariantCulture)
+        ''' <summary>
+        ''' 
+        ''' </summary>
+        ''' <returns></returns>
+        Public Overrides Function ToString() As String
+            Return Name
         End Function
 
         Public Overrides Function GetHashCode() As Integer
-            Return SectionName.GetHashCode()
+            Return Name.GetHashCode()
         End Function
 
-        Public Overrides Function ToString() As String
-            Return SectionName
+        Public Overrides Function Equals(obj As Object) As Boolean
+            Return Equals(TryCast(obj, UserDefinedSection))
         End Function
-#End Region
+
+        Public Overloads Function Equals(other As UserDefinedSection) As Boolean Implements IEquatable(Of UserDefinedSection).Equals
+            Return other IsNot Nothing AndAlso other.Name.Equals(Name, StringComparison.InvariantCulture)
+        End Function
+
+        Private Shared ReadOnly Cache As ICollection(Of UserDefinedSection) = New List(Of UserDefinedSection)
+
+        ''' <summary>
+        ''' 
+        ''' </summary>
+        ''' <returns></returns>
+        Public Shared Function Values() As IEnumerable(Of UserDefinedSection)
+            Return Cache
+        End Function
 
     End Class
 End Namespace

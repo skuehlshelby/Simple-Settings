@@ -36,7 +36,7 @@ Public Class SettingsTests
     End Sub
     <TestMethod>
     Public Sub ValuesAreSynchronizedAcrossInstances()
-        Dim Cache As ISettingsFile = Factory.GetSettingsFile(INITestFilePath)
+        Dim Cache As ISettingsFile = INI.GetSettingsFile(INITestFilePath)
 
         Dim SettingA As ISetting(Of Long) = Cache.GetSetting(Of Long)("TestSettings", "LongSetting", 1)
         Dim SettingB As ISetting(Of Long) = Cache.GetSetting(Of Long)("TestSettings", "LongSetting", 1)
@@ -45,7 +45,7 @@ Public Class SettingsTests
 
         Assert.AreEqual(SettingA.Value, SettingB.Value)
 
-        Factory.RemoveSettingsFile(INITestFilePath, True)
+        INI.RemoveSettingsFile(INITestFilePath, True)
     End Sub
     <TestMethod>
     Public Sub EventIsRaisedWhenSettingValueChanges()
@@ -53,7 +53,7 @@ Public Class SettingsTests
         Const NewValue As Long = 56
 
         Dim EventsReceived As List(Of String) = New List(Of String)
-        Dim SettingA As ISetting(Of Long) = Factory.GetSetting(INITestFilePath, "TestSettings", "LongSetting", DefaultValue)
+        Dim SettingA As ISetting(Of Long) = INI.GetSetting(INITestFilePath, "TestSettings", "LongSetting", DefaultValue)
 
         AddHandler SettingA.ValueChanged, (Sub(ByRef Sender As Object, E As ValueChangedEventArgs(Of Long))
                                                  EventsReceived.Add(NameOf(E))

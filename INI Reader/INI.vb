@@ -1,24 +1,32 @@
 ﻿Imports System.IO
 Imports SimpleSettings.Extensibility
 
-''' <include file='Docs.xml' path='//classes/factory' />
-Public NotInheritable Class Factory
+''' <summary>
+''' The entry-point for this library. Use this class to create <c>ISetting</c> and <c>ISettingsFile</c> objects.<br/>
+''' Settings can be accessed either through this class, or through an <c>ISettingsFile</c>. The underlying<br/>
+''' values will be the same.<br/>
+'''
+''' The <c>WriteAllToDisk()</c> function should be called during program shutdown to save all settings.<br/>
+''' It is not necessary to call this method at any other time.
+''' </summary>
+Public NotInheritable Class INI
     Private Shared ReadOnly Cache As IDictionary(Of String, ISettingsFile) = New Dictionary(Of String, ISettingsFile)
 
     Private Sub New()
     End Sub
 
-    ''' <exception cref="ArgumentException"></exception>
-    ''' <exception cref="ArgumentNullException"></exception>
-    ''' <exception cref="Security.SecurityException"></exception>
-    ''' <exception cref="NotSupportedException"></exception>
-    ''' <exception cref="PathTooLongException"></exception>
     Private Shared Function StandardizeFileName(ParamArray pathComponents As String()) As String
         Return Path.ChangeExtension(Path.GetFullPath(Path.Combine(pathComponents)), ".ini")
     End Function
 
-    ''' <include file='Docs.xml' path='//methods/getSettingsFile' />
-    ''' <include file='Docs.xml' path='//parameters/filePath' />
+''' <summary>
+''' Get a wrapper representing the settings file at the specified <paramref name="FilePath"/>.<br/>
+''' If the file does not exist, it will be created. If the parent folder does not exist, a<br/>
+''' <c>DirectoryNotFoundException</c> will be thrown.
+''' </summary>
+''' <param name="filePath">The full path to the target file. '.INI' suffix is optional.</param>
+''' <exception cref="DirectoryNotFoundException"></exception>
+''' <returns>An <c>ISettingsFile</c> object whose settings can be queried and updated.</returns>
     Public Shared Function GetSettingsFile(ParamArray filePath As String()) As ISettingsFile
         Contracts.RequireNonNull(filePath, NameOf(filePath), nameOf(GetSettingsFile))
         Contracts.Require(Of ArgumentException)(filePath.Any(Function(segment) Not String.IsNullOrEmpty(segment)), $"Parameter '{NameOf(filePath)}' cannot contain only empty strings.")
@@ -38,12 +46,19 @@ Public NotInheritable Class Factory
         Return Cache.Item(settingsFileInfo.FullName)
     End Function
 
-    ''' <include file='Docs.xml' path='//methods/getSetting/*[@parentClass="factory"]' />
-    ''' <include file='Docs.xml' path='//parameters/filePath' />
-    ''' <include file='Docs.xml' path='//parameters/section[@type="string"]/*' />
-    ''' <include file='Docs.xml' path='//parameters/name[@type="string"]/*' />
-    ''' <include file='Docs.xml' path='//parameters/defaultValue' />
-    ''' <include file='Docs.xml' path='//genericParameters/T' />
+''' <summary>
+''' Get the setting with the specified <paramref name="FilePath"/>, <paramref name="Section"/>, and <paramref name="Name"/>.
+''' </summary>
+''' <typeparam name="T">
+''' The type of value contained by the target setting.<br/>
+''' A <see cref="ComponentModel.TypeConverter"/> capable of yielding type <typeparamref name="T"/> from a <c>String</c> must exist.<br/>
+''' Most .NET types already have one.
+''' </typeparam>
+''' <param name="filePath">The full path to the target file. File suffix is optional.</param>
+''' <param name="section">The section containing this setting.</param>
+''' <param name="name">The name of this setting.</param>
+''' <param name="defaultValue">The default value of this setting.</param>
+''' <returns></returns>
     Public Overloads Shared Function GetSetting (Of T)(filePath As String, section As String, name As String, defaultValue As T) As ISetting(Of T)
         Contracts.Require(Of ArgumentNullException)(filePath IsNot Nothing, $"Parameter '{NameOf(filePath)}' cannot be null (Nothing in Visual Basic).")
         Contracts.Require(Of ArgumentException)(Not String.IsNullOrEmpty(filePath), $"Parameter '{NameOf(filePath)}' cannot be empty.")
@@ -56,12 +71,19 @@ Public NotInheritable Class Factory
         Return GetSettingsFile(filePath).GetSetting(section, name, defaultValue)
     End Function
 
-    ''' <include file='Docs.xml' path='//methods/getSetting/*[@parentClass="factory"]' />
-    ''' <include file='Docs.xml' path='//parameters/filePath' />
-    ''' <include file='Docs.xml' path='//parameters/section[@type="userDefined"]/*' />
-    ''' <include file='Docs.xml' path='//parameters/name[@type="userDefined"]/*' />
-    ''' <include file='Docs.xml' path='//parameters/defaultValue' />
-    ''' <include file='Docs.xml' path='//genericParameters/T' />
+''' <summary>
+''' Get the setting with the specified <paramref name="FilePath"/>, <paramref name="Section"/>, and <paramref name="Name"/>.
+''' </summary>
+''' <typeparam name="T">
+''' The type of value contained by the target setting.<br/>
+''' A <see cref="ComponentModel.TypeConverter"/> capable of yielding type <typeparamref name="T"/> from a <c>String</c> must exist.<br/>
+''' Most .NET types already have one.
+''' </typeparam>
+''' <param name="filePath">The full path to the target file. File suffix is optional.</param>
+''' <param name="section">The section containing this setting.</param>
+''' <param name="name">The name of this setting.</param>
+''' <param name="defaultValue">The default value of this setting.</param>
+''' <returns></returns>
     Public Overloads Shared Function GetSetting (Of T)(filePath As String, section As UserDefinedSection, name As UserDefinedSetting, defaultValue As T) As ISetting(Of T)
         Contracts.Require(Of ArgumentNullException)(filePath IsNot Nothing, $"Parameter '{NameOf(filePath)}' cannot be null (Nothing in Visual Basic).")
         Contracts.Require(Of ArgumentException)(Not String.IsNullOrEmpty(filePath), $"Parameter '{NameOf(filePath)}' cannot be empty.")
@@ -72,10 +94,7 @@ Public NotInheritable Class Factory
         Return GetSettingsFile(filePath).GetSetting(section, name, defaultValue)
     End Function
 
-    ''' <include file='Docs.xml' path='//methods/removeSetting' />
-    ''' <include file='Docs.xml' path='//parameters/filePath' />
-    ''' <include file='Docs.xml' path='//parameters/section[@type="string"]/*' />
-    ''' <include file='Docs.xml' path='//parameters/name[@type="string"]/*' />
+
     Public Overloads Shared Sub RemoveSetting(filePath As String, section As String, name As String)
         Contracts.Require(Of ArgumentNullException)(filePath IsNot Nothing, $"Parameter '{NameOf(filePath)}' cannot be null (Nothing in Visual Basic).")
         Contracts.Require(Of ArgumentException)(Not String.IsNullOrEmpty(filePath), $"Parameter '{NameOf(filePath)}' cannot be empty.")
@@ -87,9 +106,7 @@ Public NotInheritable Class Factory
         Cache.Item(StandardizeFileName(filePath)).RemoveSetting(section, name)
     End Sub
 
-    ''' <include file='Docs.xml' path='//methods/removeSetting' />
-    ''' <include file='Docs.xml' path='//parameters/filePath' />
-    ''' <include file='Docs.xml' path='//parameters/setting' />
+
     Public Overloads Shared Sub RemoveSetting(filePath As String, setting As ISetting)
         Contracts.Require(Of ArgumentNullException)(filePath IsNot Nothing, $"Parameter '{NameOf(filePath)}' cannot be null (Nothing in Visual Basic).")
         Contracts.Require(Of ArgumentException)(Not String.IsNullOrEmpty(filePath), $"Parameter '{NameOf(filePath)}' cannot be empty.")
@@ -98,10 +115,6 @@ Public NotInheritable Class Factory
         RemoveSetting(filePath, setting.Section, setting.Name)
     End Sub
 
-    ''' <include file='Docs.xml' path='//methods/removeSetting' />
-    ''' <include file='Docs.xml' path='//parameters/filePath' />
-    ''' <include file='Docs.xml' path='//parameters/section[@type="userDefined"]/*' />
-    ''' <include file='Docs.xml' path='//parameters/name[@type="userDefined"]/*' />
     Public Overloads Shared Sub RemoveSetting(filePath As String, section As UserDefinedSection, name As UserDefinedSetting)
         Contracts.Require(Of ArgumentNullException)(filePath IsNot Nothing, $"Parameter '{NameOf(filePath)}' cannot be null (Nothing in Visual Basic).")
         Contracts.Require(Of ArgumentException)(Not String.IsNullOrEmpty(filePath), $"Parameter '{NameOf(filePath)}' cannot be empty.")
@@ -111,25 +124,27 @@ Public NotInheritable Class Factory
         RemoveSetting(filePath, section.ToString, name.ToString)
     End Sub
 
-    ''' <include file='Docs.xml' path='//methods/removeSettingsFile' />
-    ''' <include file='Docs.xml' path='//parameters/filePath' />
-    ''' <include file='Docs.xml' path='//parameters/killFile' />
-    Public Shared Sub RemoveSettingsFile(filePath As String, Optional killFile As Boolean = False)
+    Public Shared Sub RemoveSettingsFile(filePath As String, Optional deleteFile As Boolean = False)
         Contracts.Require(Of ArgumentNullException)(filePath IsNot Nothing, $"Parameter '{NameOf(filePath)}' cannot be null (Nothing in Visual Basic).")
         Contracts.Require(Of ArgumentException)(Not String.IsNullOrEmpty(filePath), $"Parameter '{NameOf(filePath)}' cannot be empty.")
 
         Dim standardizedFileName As String = StandardizeFileName(filePath)
 
         If Cache.ContainsKey(standardizedFileName) Then
-            DirectCast(Cache.Item(standardizedFileName), SettingsFile).Dispose()
             Cache.Remove(standardizedFileName)
         End If
 
-        If killFile Then
+        If deleteFile Then
             If File.Exists(standardizedFileName) Then
                 Kill(standardizedFileName)
             End If
         End If
+    End Sub
+
+    Public Shared Sub WriteAllToDisk()
+        For Each file As ISettingsFile In Cache.Values
+            file.WriteToDisk()
+        Next
     End Sub
 
 End Class

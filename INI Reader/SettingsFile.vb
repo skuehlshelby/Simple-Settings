@@ -22,7 +22,8 @@ Friend Class SettingsFile
         Dim key As String = CreateKey(section, name)
 
         If Not _settings.ContainsKey(key) Then
-            _settings.Add(key, New Setting(Of T)(section, name, defaultValue))
+            Dim initialValue As T = CRUD.CRUD.EntryRead(_fileLocation.FullName, section, name, defaultValue)
+            _settings.Add(key, New Setting(Of T)(section, name, initialValue))
         End If
 
         Return DirectCast(_settings.Item(key), ISetting(Of T))

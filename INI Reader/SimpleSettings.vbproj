@@ -102,7 +102,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ValueChangedEventArgs.vb" />
-    <Compile Include="Factory.vb" />
+    <Compile Include="INI.vb" />
     <Compile Include="Contracts.vb" />
     <Compile Include="CRUD\NativeMethods.vb" />
   </ItemGroup>
@@ -138,7 +138,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Extensibility\SectionAndSettingDocs.xml" />
-    <Content Include="Docs.xml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
