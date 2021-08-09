@@ -1,6 +1,6 @@
 ﻿Imports SimpleSettings
 
-Module TestClient
+Module Main
 
     Sub Main()
         Dim testClientSettings As ISettingsFile = INI.GetSettingsFile(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "TestClientSettings")

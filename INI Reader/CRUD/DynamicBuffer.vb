@@ -31,15 +31,10 @@ Namespace CRUD
             End Get
         End Property
 
-        Public Property Value As StringBuilder
+        Public Readonly Property Value As StringBuilder
             Get
                 Return _buffer
             End Get
-            Set
-                If _buffer IsNot value Then
-                    _buffer = value
-                End If
-            End Set
         End Property
 
         Public Overrides Function ToString() As String

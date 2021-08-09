@@ -75,7 +75,7 @@
   <ItemGroup>
     <Compile Include="Section.vb" />
     <Compile Include="Setting.vb" />
-    <Compile Include="TestClient.vb" />
+    <Compile Include="Main.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

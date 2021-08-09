@@ -1,23 +1,15 @@
 ﻿
 Namespace Extensibility
-
-    ''' <summary>
-    ''' 
-    ''' </summary>
     Public MustInherit Class UserDefinedSection
         Implements IEquatable(Of UserDefinedSection)
-
-        Protected ReadOnly Property Name As String
 
         Protected Sub New(name As String)
             Me.Name = name
             Cache.Add(Me)
         End Sub
 
-        ''' <summary>
-        ''' 
-        ''' </summary>
-        ''' <returns></returns>
+        Protected ReadOnly Property Name As String
+
         Public Overrides Function ToString() As String
             Return Name
         End Function
@@ -36,10 +28,6 @@ Namespace Extensibility
 
         Private Shared ReadOnly Cache As ICollection(Of UserDefinedSection) = New List(Of UserDefinedSection)
 
-        ''' <summary>
-        ''' 
-        ''' </summary>
-        ''' <returns></returns>
         Public Shared Function Values() As IEnumerable(Of UserDefinedSection)
             Return Cache
         End Function
